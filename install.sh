@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # =================================================================
-# EXAMEN : Administration Avancée Linux
 # Script d'installation Arch Linux sur une VM
 # =================================================================
 
@@ -37,7 +36,7 @@ echo "[2/10] Initialisation LUKS..."
 echo -n "${PASSWORD}" | cryptsetup luksFormat ${LVM_PART} -
 echo -n "${PASSWORD}" | cryptsetup open ${LVM_PART} cryptlvm -
 
-# 3. Configuration LVM (80G)
+# 3. Configuration LVM 
 echo "[3/10] Configuration des Volumes Logiques (LVM)..."
 pvcreate /dev/mapper/cryptlvm
 vgcreate vg0 /dev/mapper/cryptlvm
@@ -57,7 +56,7 @@ mkfs.ext4 /dev/vg0/home
 mkfs.ext4 /dev/vg0/virtualbox
 mkfs.ext4 /dev/vg0/shared
 
-# Configuration LUKS sur le volume manuel 
+# Configuration LUKS sur le volume 
 echo -n "${PASSWORD}" | cryptsetup luksFormat /dev/vg0/encrypted_manual -
 
 # 5. Montage
@@ -82,10 +81,10 @@ pacstrap /mnt base linux linux-firmware lvm2 cryptsetup sudo networkmanager \
              gcc make gdb xorg-server xorg-xinit i3-wm i3status dmenu xterm \
              firefox virtualbox virtualbox-host-modules-arch htop git vim
 
-# 7. Génération du FSTAB
+# 7. FSTAB
 genfstab -U /mnt >> /mnt/etc/fstab
 
-# 8. Configuration interne 
+# 8. Config interne 
 echo "[8/10] Configuration du système ..."
 LUKS_UUID=$(blkid -s UUID -o value ${LVM_PART})
 
@@ -101,7 +100,7 @@ echo "KEYMAP=fr" > /etc/vconsole.conf
 # Réseau
 echo "${HOSTNAME}" > /etc/hostname
 
-# Initramfs avec LUKS et LVM
+# Initramfs
 sed -i 's/^HOOKS=.*/HOOKS=(base udev autodetect keyboard keymap modconf block encrypt lvm2 filesystems fsck)/' /etc/mkinitcpio.conf
 mkinitcpio -P
 
@@ -123,11 +122,11 @@ echo "root:${PASSWORD}" | chpasswd
 # Configuration Sudo
 echo "%wheel ALL=(ALL:ALL) ALL" > /etc/sudoers.d/wheel
 
-# Droits sur le dossier partagé (5G)
+# Droits sur le dossier partagé 
 chown :family_share /home/partage_familial
 chmod 770 /home/partage_familial
 
-# Activation Services
+# Services
 systemctl enable NetworkManager
 EOF
 
