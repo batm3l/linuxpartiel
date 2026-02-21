@@ -62,12 +62,18 @@ echo -n "${PASSWORD}" | cryptsetup luksFormat /dev/vg0/encrypted_manual -
 
 # 5. Montage
 echo "[5/10] Montage des partitions..."
+
 mount /dev/vg0/root /mnt
-mkdir -p /mnt/{boot,home,var/lib/virtualbox,home/partage_familial}
+mkdir -p /mnt/boot
+mkdir -p /mnt/home
+mkdir -p /mnt/var/lib/virtualbox
 
 mount ${BOOT_PART} /mnt/boot
 mount /dev/vg0/home /mnt/home
 mount /dev/vg0/virtualbox /mnt/var/lib/virtualbox
+
+
+mkdir -p /mnt/home/partage_familial
 mount /dev/vg0/shared /mnt/home/partage_familial
 
 # 6. Installation 
